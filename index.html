@@ -10,7 +10,7 @@
             --inibsa-coral: #ef4f5a; 
             --inibsa-navy: #19446d;
             --inibsa-light-blue: #e8f7fa;
-            --urgency-max-maroon: #800000; /* Granate para "Urgente" */
+            --urgency-max-maroon: #800000; 
             
             --bg-color: #f4f7f6;
             --card-bg: #ffffff;
@@ -31,7 +31,7 @@
             box-sizing: border-box;
         }
 
-        /* Cabecera Inibsa */
+        /* Cabecera Inibsa con Logo Ajustado */
         header {
             margin-bottom: 20px;
             background: var(--card-bg);
@@ -42,46 +42,30 @@
             display: flex; justify-content: space-between; align-items: center;
             flex-shrink: 0;
         }
+        
         header img {
             height: 45px; 
-            width: auto; 
-            display: block; 
+            width: auto;
+            display: block;
         }
-        h1 { margin: 0; font-size: 1.4rem; font-weight: normal; color: var(--inibsa-navy); }
 
         /* Estructura Principal */
         .dashboard-container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            flex: 1;
-            min-height: 0;
+            display: flex; flex-direction: column; gap: 20px; flex: 1; min-height: 0;
         }
-
         .top-row {
-            display: flex;
-            gap: 20px;
-            height: 50%; /* Mitad superior de la pantalla */
-            min-height: 300px;
+            display: flex; gap: 20px; height: 50%; min-height: 300px;
         }
-
         .bottom-row {
-            flex: 1; /* Mitad inferior */
-            min-height: 200px;
-            display: flex;
+            flex: 1; min-height: 200px; display: flex;
         }
 
-        /* Paneles Comunes */
+        /* Paneles */
         .panel {
-            background: var(--card-bg);
-            border-radius: 4px;
-            padding: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
+            background: var(--card-bg); border-radius: 4px; padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; flex-direction: column;
             border: 1px solid var(--border-color);
         }
-
         .panel-half { flex: 1; }
         .panel-full { width: 100%; box-sizing: border-box; }
 
@@ -102,7 +86,7 @@
             border-radius: 4px; outline: none; cursor: pointer;
         }
 
-        /* Tarjetas (Cards) */
+        /* Tarjetas */
         .card {
             background: white; padding: 12px 15px; border-radius: 4px;
             border: 1px solid var(--border-color); box-shadow: 0 1px 2px rgba(0,0,0,0.05);
@@ -115,13 +99,13 @@
         .card-id { font-weight: bold; font-size: 1rem; color: var(--inibsa-navy); }
         .card-meta { font-size: 0.8rem; color: var(--text-muted); }
 
-        /* Etiquetas de Urgencia / Info */
+        /* Etiquetas */
         .tag { font-size: 0.75rem; font-weight: bold; padding: 4px 8px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
         .tag-urgente { background: var(--urgency-max-maroon); color: white; }
         .tag-alerta { background: var(--inibsa-coral); color: white; }
         .tag-info { background: var(--inibsa-light-blue); color: var(--inibsa-navy); border: 1px solid #c9e6ef; }
 
-        /* Calendario Inferior */
+        /* Calendario */
         .calendar-grid {
             display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; flex: 1;
         }
@@ -134,11 +118,9 @@
             color: var(--inibsa-navy); margin-bottom: 5px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;
         }
         
-        /* Ítem del calendario (Optimizado) */
         .cal-item {
             color: white; font-weight: bold; font-size: 0.85rem; text-align: center;
-            padding: 6px; border-radius: 4px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-            transition: opacity 0.2s;
+            padding: 6px; border-radius: 4px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.1); transition: opacity 0.2s;
         }
         .cal-item:hover { opacity: 0.8; }
         .cal-urgente { background-color: var(--urgency-max-maroon); }
@@ -155,25 +137,24 @@
 <body>
 
     <header>
-        <img src="data/inibsa.png" alt="logo inibsa">
-        <div style="font-size: 0.9rem; color: var(--inibsa-navy);">Command Comercial Center</div>
+        <img src="inibsa.png" alt="logo inibsa">
+        <div style="font-size: 0.9rem; color: var(--inibsa-navy);">Planificación Inteligente de Cartera</div>
     </header>
 
     <div class="dashboard-container">
-        
         <div class="top-row">
-            
             <div class="panel panel-half">
                 <div class="panel-header">
                     <h2 class="panel-title" style="color: var(--urgency-max-maroon);">Acciones de Retención</h2>
                 </div>
                 <div class="list-container" id="alerts-list">
-                    </div>
+                    <div style="padding: 10px; color: #999;">Cargando datos...</div>
+                </div>
             </div>
 
             <div class="panel panel-half">
                 <div class="panel-header">
-                    <h2 class="panel-title" style="color: var(--inibsa-navy);">Pronóstico de Ventas</h2>
+                    <h2 class="panel-title" style="color: var(--inibsa-navy);">Radar Predictivo SNN</h2>
                     <select id="province-select">
                         <option value="Todas">Región: Todas</option>
                         <option value="Madrid">Madrid</option>
@@ -182,23 +163,22 @@
                     </select>
                 </div>
                 <div class="list-container" id="notices-list">
-                    </div>
+                    <div style="padding: 10px; color: #999;">Cargando predicciones...</div>
+                </div>
             </div>
-
         </div>
 
         <div class="bottom-row">
             <div class="panel panel-full" style="padding-top: 15px;">
-                <h2 class="panel-title" style="margin-bottom: 15px; font-size: 1rem;">Distribución Semanal Recomendada</h2>
+                <h2 class="panel-title" style="margin-bottom: 15px; font-size: 1rem;">Distribución Semanal Recomendada (IA)</h2>
                 <div class="calendar-grid" id="calendar">
                     </div>
             </div>
         </div>
-
     </div>
 
     <div class="modal-overlay" id="modal">
-        <div class="modal-content">
+        <div class="modal-content" id="modal-content-wrapper">
             <button class="modal-close" onclick="closeModal()">&times;</button>
             <div id="modal-tag" class="tag" style="display: inline-block; margin-bottom: 12px;"></div>
             <h2 id="modal-client" style="margin: 0; color: var(--inibsa-navy);"></h2>
@@ -208,30 +188,75 @@
     </div>
 
     <script>
-        // Datos simulados (Estructura adaptada a tus requerimientos)
-        const mockAlerts = [
-            { id: 'A1', clientId: 'C-14052', family: 'Restauración', urgency: 'Urgente', message: 'Cliente clave no ha realizado su pedido habitual. Riesgo de rotura de stock inminente.' },
-            { id: 'A2', clientId: 'C-99123', family: 'Anestesia', urgency: 'Alerta', message: 'Desviación en patrón de compra detectada. Posible entrada de competidor.' },
-            { id: 'A3', clientId: 'C-88122', family: 'Desinfección', urgency: 'Urgente', message: 'Caída de volumen superior al 50% respecto al trimestre anterior.' },
-            { id: 'A4', clientId: 'C-00214', family: 'Material', urgency: 'Alerta', message: 'Retraso de 10 días sobre la ventana de compra prevista.' },
-            { id: 'A5', clientId: 'C-33411', family: 'Anestesia', urgency: 'Urgente', message: 'Fuga crítica detectada en producto técnico de alto margen.' }
-        ];
-
-        const mockNotices = [
-            { id: 'N1', clientId: 'C-08991', province: 'Madrid', family: 'Anestesia', message: 'Predicción SNN: Compra inminente de 15 unidades en próximos 7 días.' },
-            { id: 'N2', clientId: 'C-55210', province: 'Barcelona', family: 'Material', message: 'Ventana de captura abierta: Previsión de 2 unidades.' },
-            { id: 'N3', clientId: 'C-11223', province: 'Valencia', family: 'Restauración', message: 'Aumento de demanda previsto. Ofrecer volumen cruzado.' },
-            { id: 'N4', clientId: 'C-44556', province: 'Madrid', family: 'Desinfección', message: 'Intención de compra detectada en el radar predictivo.' }
-        ];
-
+        // Listas globales que almacenarán los datos parseados
+        let mockAlerts = [];
+        let mockNotices = [];
         const daysOfWeek = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
-        // 1. Renderizar Panel Izquierdo (Alertas)
+        // 1. FUNCIÓN DE CARGA (FETCH DEL JSON REAL)
+        async function cargarDatos() {
+            try {
+                // CAMBIA "data.json" por la ruta real de tu archivo JSON o endpoint de backend.
+                // Ejemplo: fetch('http://localhost:5000/api/predictions')
+                const response = await fetch('data.json'); 
+                if (!response.ok) throw new Error("Error en la red al intentar cargar el JSON");
+                
+                const data = await response.json();
+                
+                // Procesar el JSON
+                procesarJSON(data);
+                
+                // Pintar la interfaz con los datos reales
+                renderAlerts();
+                renderNotices('Todas');
+                renderCalendar();
+
+            } catch (error) {
+                console.error("Fallo al cargar los datos:", error);
+                document.getElementById('alerts-list').innerHTML = `<div style="color:red; padding:10px;">Error al cargar datos. Comprueba la consola.</div>`;
+                document.getElementById('notices-list').innerHTML = `<div style="color:red; padding:10px;">Error al cargar predicciones.</div>`;
+            }
+        }
+
+        // 2. TRADUCTOR JSON -> INTERFAZ
+        function procesarJSON(data) {
+            mockAlerts = [];
+            mockNotices = [];
+            
+            data.signals.forEach(signal => {
+                const clientName = signal.clientId; // Puedes añadir 'Cliente ' + signal.clientId si lo prefieres
+                const region = (signal.metadata && signal.metadata.provincia) ? signal.metadata.provincia : "Sin definir";
+
+                if (signal.urgency === "Urgente" || signal.urgency === "Alerta") {
+                    mockAlerts.push({
+                        id: signal.id,
+                        clientId: clientName,
+                        family: signal.family,
+                        urgency: signal.urgency, 
+                        message: signal.message
+                    });
+                } else {
+                    mockNotices.push({
+                        id: signal.id,
+                        clientId: clientName,
+                        province: region,
+                        family: signal.family,
+                        message: signal.message
+                    });
+                }
+            });
+        }
+
+        // 3. RENDERIZADO DEL DOM
         function renderAlerts() {
             const container = document.getElementById('alerts-list');
             container.innerHTML = '';
             
-            // Ordenamos visualmente primero los urgentes
+            if(mockAlerts.length === 0) {
+                container.innerHTML = '<div style="color:#999; padding:10px; font-size:0.9rem;">No hay alertas pendientes.</div>';
+                return;
+            }
+
             const sortedAlerts = [...mockAlerts].sort((a,b) => a.urgency === 'Urgente' ? -1 : 1);
 
             sortedAlerts.forEach(alert => {
@@ -251,7 +276,6 @@
             });
         }
 
-        // 2. Renderizar Panel Derecho (Avisos Filtrados)
         function renderNotices(province) {
             const container = document.getElementById('notices-list');
             container.innerHTML = '';
@@ -273,26 +297,24 @@
                         <div class="card-id">${notice.clientId}</div>
                         <div class="card-meta">Región: ${notice.province} | Familia: ${notice.family}</div>
                     </div>
-                    <div class="tag tag-info">Info</div>
+                    <div class="tag tag-info">SNN Info</div>
                 `;
                 card.onclick = () => openModal(notice, 'notice');
                 container.appendChild(card);
             });
         }
 
-        // 3. Renderizar Calendario (Distribución Inteligente)
         function renderCalendar() {
             const container = document.getElementById('calendar');
             container.innerHTML = '';
             
-            // Lógica IA de distribución: Ordenamos por urgencia y repartimos en los 5 días laborables
             const alertsToSchedule = [...mockAlerts].sort((a,b) => a.urgency === 'Urgente' ? -1 : 1);
             const schedule = { 'Lunes':[], 'Martes':[], 'Miércoles':[], 'Jueves':[], 'Viernes':[], 'Sábado':[], 'Domingo':[] };
             
             let dayIndex = 0;
             alertsToSchedule.forEach(alert => {
                 schedule[daysOfWeek[dayIndex]].push(alert);
-                dayIndex = (dayIndex + 1) % 5; // Solo Lunes a Viernes
+                dayIndex = (dayIndex + 1) % 5; 
             });
 
             daysOfWeek.forEach(day => {
@@ -313,41 +335,39 @@
             });
         }
 
-        // 4. Lógica del Modal
+        // 4. LÓGICA DEL MODAL
         function openModal(data, type) {
             const tag = document.getElementById('modal-tag');
+            const wrapper = document.getElementById('modal-content-wrapper');
+            
             if (type === 'alert') {
                 tag.className = `tag ${data.urgency === 'Urgente' ? 'tag-urgente' : 'tag-alerta'}`;
                 tag.innerText = data.urgency;
-                document.getElementById('modal-content-wrapper').style.borderTopColor = data.urgency === 'Urgente' ? 'var(--urgency-max-maroon)' : 'var(--inibsa-coral)';
+                wrapper.style.borderTopColor = data.urgency === 'Urgente' ? 'var(--urgency-max-maroon)' : 'var(--inibsa-coral)';
                 document.getElementById('modal-meta').innerText = `Familia: ${data.family}`;
             } else {
                 tag.className = 'tag tag-info';
                 tag.innerText = 'Predicción SNN';
-                document.getElementById('modal-content-wrapper').style.borderTopColor = 'var(--inibsa-navy)';
+                wrapper.style.borderTopColor = 'var(--inibsa-navy)';
                 document.getElementById('modal-meta').innerText = `Región: ${data.province} | Familia: ${data.family}`;
             }
             
-            document.getElementById('modal-client').innerText = `Cliente: ${data.clientId}`;
+            document.getElementById('modal-client').innerText = `Cliente ID: ${data.clientId}`;
             document.getElementById('modal-message').innerText = data.message;
             document.getElementById('modal').style.display = 'flex';
         }
 
-        // Cierre Modal
         function closeModal() { document.getElementById('modal').style.display = 'none'; }
         window.onclick = function(e) { if (e.target === document.getElementById('modal')) closeModal(); }
-        
-        // Asignar ID al modal-content para cambiar su borde
-        document.querySelector('.modal-content').id = 'modal-content-wrapper';
 
-        // Filtro y arranque
+        // Event listener del filtro
         document.getElementById('province-select').addEventListener('change', (e) => {
             renderNotices(e.target.value);
         });
 
-        renderAlerts();
-        renderNotices('Todas');
-        renderCalendar();
+        // 5. INICIAR LA APLICACIÓN
+        cargarDatos();
+
     </script>
 </body>
 </html>
