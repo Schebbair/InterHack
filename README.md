@@ -1,4 +1,4 @@
-# Inibsa Centre de Gestión Automatizada (CGA)
+# Inibsa Centro de Gestión Automatizada (CGA)
 
 ![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)
 ![PyTorch](https://img.shields.io/badge/PyTorch-snnTorch-EE4C2C.svg)
