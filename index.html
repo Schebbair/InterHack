@@ -43,22 +43,12 @@
             flex-shrink: 0;
         }
         
-        header img {
-            height: 45px; 
-            width: auto;
-            display: block;
-        }
+        header img { height: 45px; width: auto; display: block; }
 
         /* Estructura Principal */
-        .dashboard-container {
-            display: flex; flex-direction: column; gap: 20px; flex: 1; min-height: 0;
-        }
-        .top-row {
-            display: flex; gap: 20px; height: 50%; min-height: 300px;
-        }
-        .bottom-row {
-            flex: 1; min-height: 200px; display: flex;
-        }
+        .dashboard-container { display: flex; flex-direction: column; gap: 20px; flex: 1; min-height: 0; }
+        .top-row { display: flex; gap: 20px; height: 50%; min-height: 300px; }
+        .bottom-row { flex: 1; min-height: 200px; display: flex; }
 
         /* Paneles */
         .panel {
@@ -78,12 +68,15 @@
         .list-container {
             flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 5px;
         }
+        
+        .filter-group { display: flex; gap: 10px; }
 
         /* Selectores */
         select {
-            padding: 6px 12px; font-size: 0.9rem; color: var(--inibsa-navy);
+            padding: 6px 8px; font-size: 0.85rem; color: var(--inibsa-navy);
             background: var(--inibsa-light-blue); border: 1px solid #c9e6ef;
             border-radius: 4px; outline: none; cursor: pointer;
+            max-width: 140px; /* Ajustado para que quepan ambos sin romper el diseño */
         }
 
         /* Tarjetas */
@@ -98,6 +91,7 @@
         .card-details { display: flex; flex-direction: column; gap: 4px; }
         .card-id { font-weight: bold; font-size: 1rem; color: var(--inibsa-navy); }
         .card-meta { font-size: 0.8rem; color: var(--text-muted); }
+        .card-type-label { font-size: 0.8rem; color: var(--inibsa-navy); font-weight: bold; margin-top: 2px; }
 
         /* Etiquetas */
         .tag { font-size: 0.75rem; font-weight: bold; padding: 4px 8px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -106,9 +100,7 @@
         .tag-info { background: var(--inibsa-light-blue); color: var(--inibsa-navy); border: 1px solid #c9e6ef; }
 
         /* Calendario */
-        .calendar-grid {
-            display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; flex: 1;
-        }
+        .calendar-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; flex: 1; }
         .day-col {
             background: #fafafa; border-radius: 4px; border: 1px solid var(--border-color);
             padding: 10px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto;
@@ -143,9 +135,23 @@
 
     <div class="dashboard-container">
         <div class="top-row">
+            
             <div class="panel panel-half">
                 <div class="panel-header">
                     <h2 class="panel-title" style="color: var(--urgency-max-maroon);">Acciones de Retención</h2>
+                    <div class="filter-group">
+                        <select id="alert-province-select">
+                            <option value="Todas">Región: Todas</option>
+                            <option value="Álava">Álava</option><option value="Albacete">Albacete</option><option value="Alicante">Alicante</option><option value="Valencia">Valencia</option><option value="Almería">Almería</option><option value="Ávila">Ávila</option><option value="Badajoz">Badajoz</option><option value="Baleares">Baleares</option><option value="Barcelona">Barcelona</option><option value="Burgos">Burgos</option><option value="Cáceres">Cáceres</option><option value="Cádiz">Cádiz</option><option value="Castellón">Castellón</option><option value="Ciudad Real">Ciudad Real</option><option value="Córdoba">Córdoba</option><option value="A Coruña">A Coruña</option><option value="Cuenca">Cuenca</option><option value="Girona">Girona</option><option value="Granada">Granada</option><option value="Guadalajara">Guadalajara</option><option value="Gipúzkoa">Gipúzkoa</option><option value="Huelva">Huelva</option><option value="Huesca">Huesca</option><option value="Jaén">Jaén</option><option value="León">León</option><option value="Lleida">Lleida</option><option value="La Rioja">La Rioja</option><option value="Lugo">Lugo</option><option value="Madrid">Madrid</option><option value="Málaga">Málaga</option><option value="Murcia">Murcia</option><option value="Navarra">Navarra</option><option value="Orense">Orense</option><option value="Asturias">Asturias</option><option value="Palencia">Palencia</option><option value="Las Palmas">Las Palmas</option><option value="Pontevedra">Pontevedra</option><option value="Salamanca">Salamanca</option><option value="Sta. Cruz Tenerife">Sta. Cruz Tenerife</option><option value="Cantabria">Cantabria</option><option value="Segovia">Segovia</option><option value="Sevilla">Sevilla</option><option value="Soria">Soria</option><option value="Tarragona">Tarragona</option><option value="Teruel">Teruel</option><option value="Toledo">Toledo</option><option value="Valladolid">Valladolid</option><option value="Vizcaya">Vizcaya</option><option value="Zamora">Zamora</option><option value="Zaragoza">Zaragoza</option><option value="Ceuta">Ceuta</option><option value="Melilla">Melilla</option><option value="Andorra">Andorra</option>
+                        </select>
+                        <select id="alert-family-select">
+                            <option value="Todas">Fam: Todas</option>
+                            <option value="C1">C1</option>
+                            <option value="C2">C2</option>
+                            <option value="T1">T1</option>
+                            <option value="T2">T2</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="list-container" id="alerts-list">
                     <div style="padding: 10px; color: #999;">Cargando datos...</div>
@@ -155,12 +161,19 @@
             <div class="panel panel-half">
                 <div class="panel-header">
                     <h2 class="panel-title" style="color: var(--inibsa-navy);">Pronóstico de Ventas</h2>
-                    <select id="province-select">
-                        <option value="Todas">Región: Todas</option>
-                        <option value="Madrid">Madrid</option>
-                        <option value="Barcelona">Barcelona</option>
-                        <option value="Valencia">Valencia</option>
-                    </select>
+                    <div class="filter-group">
+                        <select id="notice-province-select">
+                            <option value="Todas">Región: Todas</option>
+                            <option value="Álava">Álava</option><option value="Albacete">Albacete</option><option value="Alicante">Alicante</option><option value="Valencia">Valencia</option><option value="Almería">Almería</option><option value="Ávila">Ávila</option><option value="Badajoz">Badajoz</option><option value="Baleares">Baleares</option><option value="Barcelona">Barcelona</option><option value="Burgos">Burgos</option><option value="Cáceres">Cáceres</option><option value="Cádiz">Cádiz</option><option value="Castellón">Castellón</option><option value="Ciudad Real">Ciudad Real</option><option value="Córdoba">Córdoba</option><option value="A Coruña">A Coruña</option><option value="Cuenca">Cuenca</option><option value="Girona">Girona</option><option value="Granada">Granada</option><option value="Guadalajara">Guadalajara</option><option value="Gipúzkoa">Gipúzkoa</option><option value="Huelva">Huelva</option><option value="Huesca">Huesca</option><option value="Jaén">Jaén</option><option value="León">León</option><option value="Lleida">Lleida</option><option value="La Rioja">La Rioja</option><option value="Lugo">Lugo</option><option value="Madrid">Madrid</option><option value="Málaga">Málaga</option><option value="Murcia">Murcia</option><option value="Navarra">Navarra</option><option value="Orense">Orense</option><option value="Asturias">Asturias</option><option value="Palencia">Palencia</option><option value="Las Palmas">Las Palmas</option><option value="Pontevedra">Pontevedra</option><option value="Salamanca">Salamanca</option><option value="Sta. Cruz Tenerife">Sta. Cruz Tenerife</option><option value="Cantabria">Cantabria</option><option value="Segovia">Segovia</option><option value="Sevilla">Sevilla</option><option value="Soria">Soria</option><option value="Tarragona">Tarragona</option><option value="Teruel">Teruel</option><option value="Toledo">Toledo</option><option value="Valladolid">Valladolid</option><option value="Vizcaya">Vizcaya</option><option value="Zamora">Zamora</option><option value="Zaragoza">Zaragoza</option><option value="Ceuta">Ceuta</option><option value="Melilla">Melilla</option><option value="Andorra">Andorra</option>
+                        </select>
+                        <select id="notice-family-select">
+                            <option value="Todas">Fam: Todas</option>
+                            <option value="C1">C1</option>
+                            <option value="C2">C2</option>
+                            <option value="T1">T1</option>
+                            <option value="T2">T2</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="list-container" id="notices-list">
                     <div style="padding: 10px; color: #999;">Cargando predicciones...</div>
@@ -172,7 +185,7 @@
             <div class="panel panel-full" style="padding-top: 15px;">
                 <h2 class="panel-title" style="margin-bottom: 15px; font-size: 1rem;">Distribución Semanal Recomendada</h2>
                 <div class="calendar-grid" id="calendar">
-                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -188,27 +201,20 @@
     </div>
 
     <script>
-        // Listas globales que almacenarán los datos parseados
         let mockAlerts = [];
         let mockNotices = [];
-        const daysOfWeek = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+        const daysOfWeek = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
 
-        // 1. FUNCIÓN DE CARGA (FETCH DEL JSON REAL)
         async function cargarDatos() {
             try {
-                // CAMBIA "data.json" por la ruta real de tu archivo JSON o endpoint de backend.
-                // Ejemplo: fetch('http://localhost:5000/api/predictions')
                 const response = await fetch('outputs/signals.json'); 
                 if (!response.ok) throw new Error("Error en la red al intentar cargar el JSON");
                 
                 const data = await response.json();
-                
-                // Procesar el JSON
                 procesarJSON(data);
                 
-                // Pintar la interfaz con los datos reales
                 renderAlerts();
-                renderNotices('Todas');
+                renderNotices();
                 renderCalendar();
 
             } catch (error) {
@@ -218,46 +224,86 @@
             }
         }
 
-        // 2. TRADUCTOR JSON -> INTERFAZ
         function procesarJSON(data) {
             mockAlerts = [];
             mockNotices = [];
             
             data.signals.forEach(signal => {
-                const clientName = signal.clientId; // Puedes añadir 'Cliente ' + signal.clientId si lo prefieres
-                const region = (signal.metadata && signal.metadata.provincia) ? signal.metadata.provincia : "Sin definir";
+                const clientName = signal.clientId;
+                const region = (signal.metadata && signal.province) ? signal.province : "Sin definir";
+                const fam = signal.family || "Sin Familia";
 
-                if (signal.urgency === "ALERTA URGENTE" || signal.urgency === "Alerta") {
+                const urgText = signal.urgency ? signal.urgency.toUpperCase() : "";
+                const typeStr = (signal.type || "").toLowerCase();
+
+                if (urgText.includes("ALERTA") || urgText.includes("URGENTE")) {
+                    const nivelDiseno = urgText.includes("URGENTE") ? "Urgente" : "Alerta";
+                    
+                    let alertLabel = "Alerta Genérica";
+                    let priority = 99; 
+                    
+                    if (typeStr.includes("type_4")) {
+                        alertLabel = "Oportunidad de venta";
+                        priority = 3;
+                    } else if (typeStr.includes("type_3")) {
+                        alertLabel = "Desgaste cuota mercado";
+                        priority = (nivelDiseno === "Urgente") ? 2 : 5;
+                    } else if (typeStr.includes("type_2")) {
+                        alertLabel = (nivelDiseno === "Urgente") ? "Pérdida de cliente" : "Desgaste";
+                        priority = (nivelDiseno === "Urgente") ? 1 : 4;
+                    } else {
+                        priority = (nivelDiseno === "Urgente") ? 10 : 20;
+                    }
+
                     mockAlerts.push({
                         id: signal.id,
                         clientId: clientName,
-                        family: signal.family,
-                        urgency: signal.urgency, 
-                        message: signal.message
+                        province: region, // ¡DATO CLAVE AÑADIDO PARA PODER FILTRAR!
+                        family: fam,
+                        urgency: nivelDiseno, 
+                        message: signal.message,
+                        alertLabel: alertLabel,
+                        priority: priority
                     });
                 } else {
                     mockNotices.push({
                         id: signal.id,
                         clientId: clientName,
                         province: region,
-                        family: signal.family,
+                        family: fam,
                         message: signal.message
                     });
                 }
             });
         }
 
-        // 3. RENDERIZADO DEL DOM
+        // --- FILTRO DE ALERTAS INCORPORADO ---
         function renderAlerts() {
             const container = document.getElementById('alerts-list');
+            
+            const provFilter = document.getElementById('alert-province-select').value.trim().toLowerCase();
+            const famFilter = document.getElementById('alert-family-select').value.trim().toLowerCase();
+            
             container.innerHTML = '';
             
-            if(mockAlerts.length === 0) {
-                container.innerHTML = '<div style="color:#999; padding:10px; font-size:0.9rem;">No hay alertas pendientes.</div>';
+            // Filtramos las alertas
+            const filteredAlerts = mockAlerts.filter(a => {
+                const provData = a.province.trim().toLowerCase();
+                const famData = a.family.trim().toLowerCase();
+
+                const matchProv = (provFilter === 'todas' || provData === provFilter);
+                const matchFam = (famFilter === 'todas' || famData.includes(famFilter));
+                
+                return matchProv && matchFam;
+            });
+            
+            if(filteredAlerts.length === 0) {
+                container.innerHTML = '<div style="color:#999; padding:10px; font-size:0.9rem;">No hay alertas pendientes para estos filtros.</div>';
                 return;
             }
 
-            const sortedAlerts = [...mockAlerts].sort((a,b) => a.urgency === 'Urgente' ? -1 : 1);
+            // ORDENACIÓN POR PRIORIDAD
+            const sortedAlerts = [...filteredAlerts].sort((a,b) => a.priority - b.priority);
 
             sortedAlerts.forEach(alert => {
                 const card = document.createElement('div');
@@ -267,7 +313,8 @@
                 card.innerHTML = `
                     <div class="card-details">
                         <div class="card-id">${alert.clientId}</div>
-                        <div class="card-meta">Familia: ${alert.family}</div>
+                        <div class="card-meta">Región: ${alert.province} | Fam: ${alert.family}</div>
+                        <div class="card-type-label"> ${alert.alertLabel}</div>
                     </div>
                     <div class="tag ${alert.urgency === 'Urgente' ? 'tag-urgente' : 'tag-alerta'}">${alert.urgency}</div>
                 `;
@@ -276,14 +323,26 @@
             });
         }
 
-        function renderNotices(province) {
+        function renderNotices() {
             const container = document.getElementById('notices-list');
+            
+            const provFilter = document.getElementById('notice-province-select').value.trim().toLowerCase();
+            const famFilter = document.getElementById('notice-family-select').value.trim().toLowerCase();
+            
             container.innerHTML = '';
             
-            const filtered = province === 'Todas' ? mockNotices : mockNotices.filter(n => n.province === province);
+            const filtered = mockNotices.filter(n => {
+                const provData = n.province.trim().toLowerCase();
+                const famData = n.family.trim().toLowerCase();
+
+                const matchProv = (provFilter === 'todas' || provData === provFilter);
+                const matchFam = (famFilter === 'todas' || famData.includes(famFilter));
+                
+                return matchProv && matchFam;
+            });
             
             if(filtered.length === 0) {
-                container.innerHTML = '<div style="color:#999; padding:10px; font-size:0.9rem;">Sin predicciones para esta región.</div>';
+                container.innerHTML = '<div style="color:#999; padding:10px; font-size:0.9rem;">Sin predicciones para estos filtros.</div>';
                 return;
             }
 
@@ -295,7 +354,7 @@
                 card.innerHTML = `
                     <div class="card-details">
                         <div class="card-id">${notice.clientId}</div>
-                        <div class="card-meta">Región: ${notice.province} | Familia: ${notice.family}</div>
+                        <div class="card-meta">Región: ${notice.province} | Fam: ${notice.family}</div>
                     </div>
                     <div class="tag tag-info">Info</div>
                 `;
@@ -304,12 +363,26 @@
             });
         }
 
+        // --- EL CALENDARIO AHORA DEPENDE DE LOS FILTROS DE ALERTAS ---
         function renderCalendar() {
             const container = document.getElementById('calendar');
+            
+            const provFilter = document.getElementById('alert-province-select').value.trim().toLowerCase();
+            const famFilter = document.getElementById('alert-family-select').value.trim().toLowerCase();
+            
             container.innerHTML = '';
             
-            const alertsToSchedule = [...mockAlerts].sort((a,b) => a.urgency === 'Urgente' ? -1 : 1);
-            const schedule = { 'Lunes':[], 'Martes':[], 'Miércoles':[], 'Jueves':[], 'Viernes':[], 'Sábado':[], 'Domingo':[] };
+            // Filtramos igual que en renderAlerts para que el calendario esté sincronizado
+            const filteredAlerts = mockAlerts.filter(a => {
+                const provData = a.province.trim().toLowerCase();
+                const famData = a.family.trim().toLowerCase();
+                const matchProv = (provFilter === 'todas' || provData === provFilter);
+                const matchFam = (famFilter === 'todas' || famData.includes(famFilter));
+                return matchProv && matchFam;
+            });
+
+            const alertsToSchedule = [...filteredAlerts].sort((a,b) => a.priority - b.priority);
+            const schedule = { 'Lunes':[], 'Martes':[], 'Miércoles':[], 'Jueves':[], 'Viernes':[] };
             
             let dayIndex = 0;
             alertsToSchedule.forEach(alert => {
@@ -326,7 +399,7 @@
                     const item = document.createElement('div');
                     item.className = `cal-item ${alert.urgency === 'Urgente' ? 'cal-urgente' : 'cal-alerta'}`;
                     item.innerText = alert.clientId;
-                    item.title = `Familia: ${alert.family}`;
+                    item.title = `${alert.alertLabel} - Región: ${alert.province} - Fam: ${alert.family}`;
                     item.onclick = () => openModal(alert, 'alert');
                     dayCol.appendChild(item);
                 });
@@ -335,7 +408,6 @@
             });
         }
 
-        // 4. LÓGICA DEL MODAL
         function openModal(data, type) {
             const tag = document.getElementById('modal-tag');
             const wrapper = document.getElementById('modal-content-wrapper');
@@ -344,12 +416,12 @@
                 tag.className = `tag ${data.urgency === 'Urgente' ? 'tag-urgente' : 'tag-alerta'}`;
                 tag.innerText = data.urgency;
                 wrapper.style.borderTopColor = data.urgency === 'Urgente' ? 'var(--urgency-max-maroon)' : 'var(--inibsa-coral)';
-                document.getElementById('modal-meta').innerText = `Familia: ${data.family}`;
+                document.getElementById('modal-meta').innerText = `${data.alertLabel} | Región: ${data.province} | Fam: ${data.family}`;
             } else {
                 tag.className = 'tag tag-info';
                 tag.innerText = 'Predicción SNN';
                 wrapper.style.borderTopColor = 'var(--inibsa-navy)';
-                document.getElementById('modal-meta').innerText = `Región: ${data.province} | Familia: ${data.family}`;
+                document.getElementById('modal-meta').innerText = `Región: ${data.province} | Fam: ${data.family}`;
             }
             
             document.getElementById('modal-client').innerText = `Cliente ID: ${data.clientId}`;
@@ -360,12 +432,20 @@
         function closeModal() { document.getElementById('modal').style.display = 'none'; }
         window.onclick = function(e) { if (e.target === document.getElementById('modal')) closeModal(); }
 
-        // Event listener del filtro
-        document.getElementById('province-select').addEventListener('change', (e) => {
-            renderNotices(e.target.value);
+        // LISTENERS PARA LAS ALERTAS Y EL CALENDARIO
+        document.getElementById('alert-province-select').addEventListener('change', () => {
+            renderAlerts();
+            renderCalendar(); // Se actualiza el calendario al cambiar el filtro de alertas
+        });
+        document.getElementById('alert-family-select').addEventListener('change', () => {
+            renderAlerts();
+            renderCalendar();
         });
 
-        // 5. INICIAR LA APLICACIÓN
+        // LISTENERS PARA LOS AVISOS SNN
+        document.getElementById('notice-province-select').addEventListener('change', renderNotices);
+        document.getElementById('notice-family-select').addEventListener('change', renderNotices);
+
         cargarDatos();
 
     </script>
