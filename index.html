@@ -137,8 +137,8 @@
 <body>
 
     <header>
-        <img src="inibsa.png" alt="logo inibsa">
-        <div style="font-size: 0.9rem; color: var(--inibsa-navy);">Planificación Inteligente de Cartera</div>
+        <img src="data/inibsa.png" alt="logo inibsa">
+        <div style="font-size: 0.9rem; color: var(--inibsa-navy);">Command Comercial Center</div>
     </header>
 
     <div class="dashboard-container">
@@ -154,7 +154,7 @@
 
             <div class="panel panel-half">
                 <div class="panel-header">
-                    <h2 class="panel-title" style="color: var(--inibsa-navy);">Radar Predictivo SNN</h2>
+                    <h2 class="panel-title" style="color: var(--inibsa-navy);">Pronóstico de Ventas</h2>
                     <select id="province-select">
                         <option value="Todas">Región: Todas</option>
                         <option value="Madrid">Madrid</option>
@@ -170,7 +170,7 @@
 
         <div class="bottom-row">
             <div class="panel panel-full" style="padding-top: 15px;">
-                <h2 class="panel-title" style="margin-bottom: 15px; font-size: 1rem;">Distribución Semanal Recomendada (IA)</h2>
+                <h2 class="panel-title" style="margin-bottom: 15px; font-size: 1rem;">Distribución Semanal Recomendada</h2>
                 <div class="calendar-grid" id="calendar">
                     </div>
             </div>
@@ -198,7 +198,7 @@
             try {
                 // CAMBIA "data.json" por la ruta real de tu archivo JSON o endpoint de backend.
                 // Ejemplo: fetch('http://localhost:5000/api/predictions')
-                const response = await fetch('data.json'); 
+                const response = await fetch('outputs/signals.json'); 
                 if (!response.ok) throw new Error("Error en la red al intentar cargar el JSON");
                 
                 const data = await response.json();
@@ -227,7 +227,7 @@
                 const clientName = signal.clientId; // Puedes añadir 'Cliente ' + signal.clientId si lo prefieres
                 const region = (signal.metadata && signal.metadata.provincia) ? signal.metadata.provincia : "Sin definir";
 
-                if (signal.urgency === "Urgente" || signal.urgency === "Alerta") {
+                if (signal.urgency === "ALERTA URGENTE" || signal.urgency === "Alerta") {
                     mockAlerts.push({
                         id: signal.id,
                         clientId: clientName,
@@ -297,7 +297,7 @@
                         <div class="card-id">${notice.clientId}</div>
                         <div class="card-meta">Región: ${notice.province} | Familia: ${notice.family}</div>
                     </div>
-                    <div class="tag tag-info">SNN Info</div>
+                    <div class="tag tag-info">Info</div>
                 `;
                 card.onclick = () => openModal(notice, 'notice');
                 container.appendChild(card);
