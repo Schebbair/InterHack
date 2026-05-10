@@ -45,6 +45,19 @@
         
         header img { height: 45px; width: auto; display: block; }
 
+        .btn-primary {
+            background-color: #3f5af3;
+            color: white; border: none; padding: 8px 16px;
+            border-radius: 4px; font-size: 0.9rem; font-weight: bold;
+            cursor: pointer; display: flex; align-items: center; gap: 8px;
+            transition: all 0.2s; box-shadow: 0 2px 4px rgba(239, 79, 90, 0.3);
+        }
+        .btn-primary:hover { background-color: var(--inibsa-coral); transform: translateY(-1px); }
+        .btn-primary:disabled { background-color: #ccc; cursor: not-allowed; transform: none; box-shadow: none;}
+        
+        /* Animación de carga */
+        .spinner { animation: spin 1s linear infinite; display: inline-block; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
         /* Estructura Principal */
         .dashboard-container { display: flex; flex-direction: column; gap: 20px; flex: 1; min-height: 0; }
         .top-row { display: flex; gap: 20px; height: 50%; min-height: 300px; }
@@ -130,7 +143,9 @@
 
     <header>
         <img src="data/inibsa.png" alt="logo inibsa">
-        <div style="font-size: 0.9rem; color: var(--inibsa-navy);">Command Comercial Center</div>
+        <button id="btn-run-model" class="btn-primary" onclick="ejecutarModelo()">
+            <span id="btn-icon">⚡</span> Recalcular
+        </button>
     </header>
 
     <div class="dashboard-container">
@@ -204,6 +219,28 @@
         let mockAlerts = [];
         let mockNotices = [];
         const daysOfWeek = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
+        
+        function ejecutarModelo() {
+            const btn = document.getElementById('btn-run-model');
+            
+            // 1. Cambiamos el botón al estado "Cargando"
+            btn.disabled = true;
+            btn.innerHTML = `<span class="spinner">↻</span> Procesando IA...`;
+            
+            // 2. Simulamos el tiempo de proceso (2000 milisegundos = 2 segundos)
+            setTimeout(() => {
+                
+                // 3. Restauramos el botón a la normalidad
+                btn.disabled = false;
+                btn.innerHTML = `<span>⚡</span> Recalcular`;
+                
+                // 4. Recargamos los datos (es más profesional que un recargo brusco de pantalla)
+                cargarDatos(); 
+                
+                location.reload();
+
+            }, 2000); 
+        }
 
         async function cargarDatos() {
             try {
