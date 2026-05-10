@@ -5,7 +5,7 @@ from snntorch import surrogate
 
 
 class SNN(nn.Module):
-    def __init__(self, num_inputs=26, num_hidden=64, num_outputs=25, beta=0.9):
+    def __init__(self, num_inputs=5, num_hidden=64, num_outputs=4, beta=0.9):
         super().__init__()
         
         spike_grad = surrogate.fast_sigmoid(slope=25)
@@ -36,10 +36,8 @@ class SNN(nn.Module):
             mem2_rec.append(mem2)
 
         out_mem = torch.stack(mem2_rec, dim=0)[-1]
-
-        pred = torch.relu(out_mem)
         
-        return pred
+        return out_mem
     
 
     
