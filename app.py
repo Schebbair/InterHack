@@ -10,12 +10,20 @@ from zipfile import ZIP_DEFLATED, ZipFile
 import numpy as np
 import pandas as pd
 
+from spc_backfill import (
+    actuals_for_month,
+    ensure_month_period,
+    load_or_create_historical_spc_errors,
+    update_errors,
+)
+
 
 RAW_DATA_PATH = Path("Datasets.xlsx")
 TREATED_DATA_PATH = Path("dataset_uploader") / "treatedData.xlsx"
 DATA_PATH = TREATED_DATA_PATH if TREATED_DATA_PATH.exists() else RAW_DATA_PATH
 MODEL_PATH = Path("snn") / "snn_model"
 ERRORS_PATH = Path("outputs") / "prediction_errors.csv"
+SPC_BACKFILL_ERRORS_PATH = Path("outputs") / "spc_backfill_errors.csv"
 PREDICTIONS_PATH = Path("outputs") / "predictions.csv"
 SIGNALS_PATH = Path("outputs") / "signals.csv"
 SIGNALS_JSON_PATH = Path("outputs") / "signals.json"
@@ -51,11 +59,13 @@ class PipelineConfig:
     data_path: Path = DATA_PATH
     model_path: Path = MODEL_PATH
     errors_path: Path = ERRORS_PATH
+    spc_backfill_errors_path: Path = SPC_BACKFILL_ERRORS_PATH
     predictions_path: Path = PREDICTIONS_PATH
     signals_path: Path = SIGNALS_PATH
     signals_json_path: Path = SIGNALS_JSON_PATH
     families: tuple[str, ...] = tuple(FAMILIES)
     history_periods: int = 60
+    spc_backfill_months: int = 12
 
 
 class SNNPredictor:
@@ -264,6 +274,23 @@ def load_promiscuous_clients(data_path: Path) -> pd.DataFrame:
     promiscuos["id_cliente"] = pd.to_numeric(promiscuos["id_cliente"], errors="coerce").astype("Int64")
     promiscuos["categoria"] = promiscuos["categoria"].astype("string").str.strip()
     return promiscuos.dropna(subset=["id_cliente", "categoria"]).drop_duplicates()
+
+
+def load_clients(data_path: Path) -> pd.DataFrame:
+    clientes = pd.read_excel(data_path, sheet_name="Clientes")
+    clientes = clientes.rename(
+        columns={
+            "Id.Cliente": "id_cliente",
+            "Id. Cliente": "id_cliente",
+            "Provincia": "provincia",
+        }
+    )
+    if "provincia" not in clientes.columns:
+        clientes["provincia"] = pd.NA
+    clientes = clientes[["id_cliente", "provincia"]].copy()
+    clientes["id_cliente"] = pd.to_numeric(clientes["id_cliente"], errors="coerce").astype("Int64")
+    clientes["provincia"] = clientes["provincia"].astype("string").str.strip()
+    return clientes.dropna(subset=["id_cliente"]).drop_duplicates("id_cliente", keep="last")
 
 
 def monthly_family_sales(ventas: pd.DataFrame, families: Iterable[str]) -> pd.DataFrame:
@@ -581,13 +608,6 @@ def load_errors(errors_path: Path = ERRORS_PATH) -> pd.DataFrame:
     return errors[columns]
 
 
-def ensure_month_period(df: pd.DataFrame) -> pd.DataFrame:
-    df = df.copy()
-    if "month" in df.columns and not df.empty:
-        df["month"] = pd.PeriodIndex(df["month"], freq="M")
-    return df
-
-
 def load_predictions(predictions_path: Path = PREDICTIONS_PATH) -> pd.DataFrame:
     columns = ["id_cliente", "month", "familia", "prediccion"]
     if not predictions_path.exists():
@@ -609,56 +629,6 @@ def append_predictions(
     return combined.drop_duplicates(["id_cliente", "familia", "month"], keep="last")
 
 
-def update_errors(
-    existing_errors: pd.DataFrame,
-    prediction_history: pd.DataFrame,
-    actuals: pd.DataFrame,
-) -> pd.DataFrame:
-    """Append errors for predictions whose real sales are already known.
-
-    Error definition: real value - previous prediction. In a daily run this
-    usually closes errors for older predicted months, while the new future
-    prediction remains only in prediction history until real sales arrive.
-    """
-    existing_errors = ensure_month_period(existing_errors)
-    prediction_history = ensure_month_period(prediction_history)
-    actuals = ensure_month_period(actuals)
-
-    comparable = prediction_history.merge(
-        actuals,
-        on=["id_cliente", "month", "familia"],
-        how="inner",
-    )
-    comparable["error"] = comparable["real"] - comparable["prediccion"]
-
-    new_errors = comparable[["id_cliente", "familia", "month", "real", "prediccion", "error"]]
-    if existing_errors.empty:
-        return new_errors.drop_duplicates(["id_cliente", "familia", "month"], keep="last")
-
-    combined = pd.concat([existing_errors, new_errors], ignore_index=True)
-    combined = ensure_month_period(combined)
-    return combined.drop_duplicates(["id_cliente", "familia", "month"], keep="last")
-
-
-def actuals_for_month(monthly: pd.DataFrame, families: Iterable[str]) -> pd.DataFrame:
-    families = list(families)
-    return monthly.melt(
-        id_vars=["id_cliente", "month"],
-        value_vars=families,
-        var_name="familia",
-        value_name="real",
-    )
-
-
-def latest_non_negative_errors(errors: pd.DataFrame) -> pd.DataFrame:
-    if errors.empty:
-        return errors
-
-    latest_idx = errors.sort_values("month").groupby(["id_cliente", "familia"])["month"].idxmax()
-    latest = errors.loc[latest_idx]
-    return latest[latest["error"] >= 0]
-
-
 def scp_client_family(id_cliente: Any, familia: str, error_history: pd.Series) -> str | None:
     if SPC is None:
         raise ImportError("SPC.py must expose SPC(lista_errores, id_cliente, id_producto).")
@@ -675,26 +645,24 @@ def build_signal_type_2(
     errors: pd.DataFrame,
     scp_func: Callable[[Any, str, pd.Series], str],
 ) -> pd.DataFrame:
-    """Run SCP only when the latest client-family error is zero or positive."""
-    allowed = latest_non_negative_errors(errors)
+    """Run SCP on each client-family error history."""
     rows = []
+    if errors.empty:
+        return pd.DataFrame(rows)
 
-    for _, latest in allowed.iterrows():
-        history = (
-            errors[
-                (errors["id_cliente"] == latest["id_cliente"])
-                & (errors["familia"] == latest["familia"])
-            ]
-            .sort_values("month")["error"]
-            .reset_index(drop=True)
-        )
-        signal = scp_func(latest["id_cliente"], latest["familia"], history)
+    for (id_cliente, familia), group in errors.groupby(["id_cliente", "familia"], dropna=False):
+        ordered = group.sort_values("month")
+        history = ordered["error"].reset_index(drop=True)
+        if len(history) < 7:
+            continue
+        latest = ordered.iloc[-1]
+        signal = scp_func(id_cliente, familia, history)
         if signal:
             rows.append(
                 {
                     "signal_type": SIGNAL_TYPE_2,
-                    "id_cliente": latest["id_cliente"],
-                    "familia": latest["familia"],
+                    "id_cliente": id_cliente,
+                    "familia": familia,
                     "month": latest["month"],
                     "urgency": urgency_from_signal(signal),
                     "signal": signal,
@@ -780,6 +748,14 @@ def build_signal_type_5(errors: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def enrich_signals_with_clients(signals: pd.DataFrame, clients: pd.DataFrame) -> pd.DataFrame:
+    if signals.empty or clients.empty or "id_cliente" not in signals.columns:
+        return signals
+    if "provincia" in signals.columns:
+        signals = signals.drop(columns=["provincia"])
+    return signals.merge(clients, on="id_cliente", how="left")
+
+
 def json_safe(value: Any) -> Any:
     if value is pd.NA or value is pd.NaT:
         return None
@@ -816,6 +792,8 @@ def frontend_signals_payload(signals: pd.DataFrame) -> dict[str, Any]:
         safe["metadata"] = pd.NA
     if "urgency" not in safe.columns:
         safe["urgency"] = pd.NA
+    if "provincia" not in safe.columns:
+        safe["provincia"] = pd.NA
 
     records = []
     for idx, row in safe.reset_index(drop=True).iterrows():
@@ -823,6 +801,7 @@ def frontend_signals_payload(signals: pd.DataFrame) -> dict[str, Any]:
             "id": f"signal-{idx + 1}",
             "type": json_safe(row.get("signal_type")),
             "clientId": json_safe(row.get("id_cliente")),
+            "province": json_safe(row.get("provincia")),
             "family": json_safe(row.get("familia")),
             "category": json_safe(row.get("categoria")),
             "month": json_safe(row.get("month")),
@@ -909,6 +888,7 @@ def run_pipeline(
     ventas, _ = clean_inputs(config.data_path)
     potencial = load_potential(config.data_path)
     promiscuous_clients = load_promiscuous_clients(config.data_path)
+    clients = load_clients(config.data_path)
     monthly = monthly_family_sales(ventas, config.families)
 
     if run_month is None:
@@ -936,9 +916,24 @@ def run_pipeline(
     existing_errors = load_errors(config.errors_path)
     actuals = actuals_for_month(monthly, config.families)
     errors = update_errors(existing_errors, prediction_history, actuals)
+    historical_spc_errors = load_or_create_historical_spc_errors(
+        model=model,
+        monthly=monthly,
+        families=config.families,
+        history_periods=config.history_periods,
+        backfill_months=config.spc_backfill_months,
+        cache_path=config.spc_backfill_errors_path,
+        build_model_inputs=build_model_inputs,
+        predict_client_family_sales=predict_client_family_sales,
+    )
+    spc_errors = pd.concat([errors, historical_spc_errors], ignore_index=True, sort=False)
+    spc_errors = ensure_month_period(spc_errors).drop_duplicates(
+        ["id_cliente", "familia", "month"],
+        keep="last",
+    )
 
-    type_2 = build_signal_type_2(errors, scp_func)
-    type_3 = build_signal_type_3(errors, scp_prod_func)
+    type_2 = build_signal_type_2(spc_errors, scp_func)
+    type_3 = build_signal_type_3(spc_errors, scp_prod_func)
     type_4 = build_signal_type_4(
         ventas,
         potencial,
@@ -949,6 +944,7 @@ def run_pipeline(
 
     signals = pd.concat([type_1, type_2, type_3, type_4, type_5], ignore_index=True, sort=False)
     signals = apply_signal_urgency(signals)
+    signals = enrich_signals_with_clients(signals, clients)
     save_outputs(signals, errors, prediction_history, config)
     return signals
 

@@ -1,6 +1,7 @@
-<<<<<<< HEAD
 __pycache__/
 .venv/
-=======
 data/
->>>>>>> dfbafbcfd163e6541f3891f8c69e10cfe591e224
+data_anal/
+snn/
+index.html/
+main.py/
