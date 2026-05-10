@@ -8,7 +8,7 @@ import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_absolute_error
 
-#from snn import SNN
+from snn import SNN
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
